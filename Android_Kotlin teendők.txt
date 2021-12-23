@@ -1,0 +1,263 @@
+Navigáció megvalósítása Android programban
+
+A legtöbb Android program nem pusztán egy képernyőből áll. 
+Amikor több képernyőt használunk, akkor szükség van a képernyők közötti navigáció megvalósítására. 
+Első lépésként a gradle fájlokhoz hozzá kell adni a szükséges függőségeket. 
+Gradle Scripts-en belül meg kell nyitni a build.gradle(Project...) fájlt, 
+és abba a következőket beírni a dependencies részhez:
+
+dependencies {
+        ...
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5"
+        
+    }
+
+Ezt követően meg kell nyitni a build.gradle(Module..) fájlt és abba a következőket megadni a plugins részen belül: A ... azokat a részeket jelenti amelyek eleve benne vannak, tehát nem kell három pontot beírni!!!!!
+
+plugins {
+    ...
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs' 
+}
+
+A függőségek részhez a következőket kell hozzáadni:
+
+dependencies {
+        ...
+        implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
+        implementation "androidx.navigation:navigation-ui-ktx:2.3.5" 
+}
+
+
+A mainActivity layout fájljába tegyünk egy fragment elemet: Amit a működő navigációhoz meg kell adni:
+
+  <fragment
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost='true'
+        app:navGraph='@navigation/navigation'
+
+  />
+
+
+
+
+
+ViewModel használata az alkalmazásban
+
+Készítsünk egy egyszerű alkalmazást, amely viewmodelt használ. 
+Az alkalmazás csak annyit fog tudni, hogy egy értéket tudunk majd növelni, vagy csökkenteni.
+Először adjuk hozzá a szükséges függőségeket az alkalmazáshoz, valamint állítsuk be az adatkötés használatát. 
+Mindkettőt a build.gradle(Module:..) fájlban. Adatkötés használata:
+
+ buildFeatures {
+    dataBinding true
+ }
+
+Lifecycle extension
+
+implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0' 
+
+
+
+
+
+
+
+Listakezelés a programban, RecyclerView használata.
+
+
+A legtöbb mobil app használ listát. Android esetén kizárólag a RecyclerView használatát javasolják, 
+mert ez a komponens nagy számú listaelem esetén is jó teljesítményt nyújt(nem akad meg a görgetés stb.) 
+Cserébe az implementálása nem annyira egyszerű. Az app navigációt is fog alkalmazni, 
+ezért az ehhez szükséges függőségeket is telepíteni kell, mint korábban.
+Gradle Scripts-en belül meg kell nyitni a build.gradle(Project...) fájlt, 
+és abba a következőket beírni a dependencies részhez:
+
+dependencies {
+        ...
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5"
+        
+    }
+
+Ezt követően meg kell nyitni a build.gradle(Module..) fájlt és abba a következőket megadni a plugins részen belül: A ... azokat a részeket jelenti amelyek eleve benne vannak, tehát nem kell három pontot beírni!!!!!
+
+plugins {
+    ...
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs' 
+}
+
+A függőségek részhez a következőket kell hozzáadni:
+
+dependencies {
+        ...
+        implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
+        implementation "androidx.navigation:navigation-ui-ktx:2.3.5" 
+        implementation "androidx.recyclerview:recyclerview:1.2.1"
+}
+
+Adatkötés használata:
+
+ buildFeatures {
+    dataBinding true
+ }
+
+
+A Sync megnyomása után készen állunk a navigáció megvalósítására.
+
+Az activity_main.xml be tegyük be a következőt:
+
+  <fragment
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost='true'
+        app:navGraph='@navigation/navigation'
+
+  />     
+
+
+
+
+
+
+Rest API hívása Android app-ból
+A következő függőségekre lesz szükség:
+
+dependencies {
+    implementation "com.squareup.moshi:moshi:1.12.0"
+    implementation "com.squareup.moshi:moshi-kotlin:1.12.0"        
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    implementation "com.squareup.retrofit2:converter-scalars:2.9.0"
+    implementation "com.github.bumptech.glide:glide:4.12.0"
+    implementation 'androidx.multidex:multidex:2.0.1'
+}
+
+A Moshi egy JSON library, a Retrofit pedig egy HTTP kliens. 
+A Glide konyvtár segítségével pedig képeket tudunk letölteni, 
+ha az api tartalmaz hivakozást ilyen jellegű adatra.
+       
+Adjuk hozzá az adatkötést is:
+
+ buildFeatures {
+    dataBinding true
+ }
+
+Nyissuk meg az AndroidManifest állományt, mert az app számára engedélyezni kell az internet hozzáférést. Írjuk be az Application tag fölé:
+
+  <uses-permission android:name="android.permission.INTERNET" />        
+
+
+
+
+
+
+
+Rest API hívás, listával
+
+
+Az előző app csak egyetlen objektumot kért le, azonban sokkal jellemzőbb, 
+hogy különböző hosszúságú listákat kér le az alkalmazás. Erre következik egy példa. 
+A függőségek: (a recyclerview-val egészül ki)
+
+dependencies {
+    implementation "com.squareup.moshi:moshi:1.12.0"
+    implementation "com.squareup.moshi:moshi-kotlin:1.12.0"        
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    implementation "com.squareup.retrofit2:converter-scalars:2.9.0"
+    implementation "com.github.bumptech.glide:glide:4.12.0"
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation "androidx.recyclerview:recyclerview:1.2.1"    
+}
+
+Kell a data binding is:
+
+```kotlin
+ buildFeatures {
+        dataBinding true
+    } 
+
+Nyissuk meg az AndroidManifest állományt, mert az app számára engedélyezni kell az internet hozzáférést. 
+Írjuk be az Application tag fölé:
+
+  <uses-permission android:name="android.permission.INTERNET" />    
+
+
+
+
+
+Api hívása navigációval, kép letöltéssel (https://randomuser.me)
+
+
+Ebben az appban megint a random useradatokat szolgáltató API-t hívjuk meg. 
+Kihívás, hogy a válaszban beágyazott objektumok is vannak, 
+erre figyelemmel kell lenni a feldolgozás során. Figyelni kell arra is, 
+hogy a szervernek adatokat küldünk, ami ugye a lekérdezni kívánt userek számát jelenti. 
+Az api hívás eredménye egy lista lesz, a listaelemre bökve pedig a listaelem részletei lesznek láthatóak. 
+##Függőségek megadása Először nyissuk meg a build.gradle(Project...) fájlt és a dependencies részhez adjuk hozzá a következő sort:
+
+ dependencies {
+
+        ***
+classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5"
+       
+    }
+
+Ezután nyissuk meg a build.gradle(Module....) fájlt! A plugins részhez adjuk hozzá a következőket:
+
+        plugins {
+    ***
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs'
+    id 'kotlin-parcelize'
+}
+
+Adjuk hozzá az adatkötést:
+
+ buildFeatures {
+        dataBinding true
+    }
+
+Majd a következő függőségeket:
+
+dependencies {
+
+    ***
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.5"
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
+    implementation "com.squareup.moshi:moshi:1.12.0"
+    implementation "com.squareup.moshi:moshi-kotlin:1.12.0"
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    implementation "com.squareup.retrofit2:converter-scalars:2.9.0"
+    implementation "com.github.bumptech.glide:glide:4.12.0"
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    ***
+}    
+
+
+
+
+
+Hozzuk létre a navigációt leíró fájlt, navigation néven!
+
+Res->New->Android Resource File Állítsuk a Resource Type-ot Navigation-ra, a name navigation legyen!
+
+Fragment megadása a MainActivity-ben
+
+Nyissuk meg a MainActivity-t töröljük ki a benne lévő TextView-t! Helyezzük el a következő elemet:
+
+   <fragment
+          android:id="@+id/nav_host_fragment"
+          android:name="androidx.navigation.fragment.NavHostFragment"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          app:defaultNavHost='true'
+          app:navGraph='@navigation/navigation'
+          />
